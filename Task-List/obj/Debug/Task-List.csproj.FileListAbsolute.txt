@@ -1,0 +1,7 @@
+C:\Users\fatmo\Grand Circus\Capstone\2\Task-List\Task-List\bin\Debug\Task-List.exe.config
+C:\Users\fatmo\Grand Circus\Capstone\2\Task-List\Task-List\bin\Debug\Task-List.exe
+C:\Users\fatmo\Grand Circus\Capstone\2\Task-List\Task-List\bin\Debug\Task-List.pdb
+C:\Users\fatmo\Grand Circus\Capstone\2\Task-List\Task-List\obj\Debug\Task-List.csprojAssemblyReference.cache
+C:\Users\fatmo\Grand Circus\Capstone\2\Task-List\Task-List\obj\Debug\Task-List.csproj.CoreCompileInputs.cache
+C:\Users\fatmo\Grand Circus\Capstone\2\Task-List\Task-List\obj\Debug\Task-List.exe
+C:\Users\fatmo\Grand Circus\Capstone\2\Task-List\Task-List\obj\Debug\Task-List.pdb

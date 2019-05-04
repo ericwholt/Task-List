@@ -484,7 +484,6 @@ namespace Task_List
             Console.WriteLine(header);//Display header
             foreach (Task task in _tasks)
             {
-                Console.WriteLine($"Task DueDate: {task.DueDate}, date passed to ListTask {date}.");
                 if (task.DueDate < date)
                 {
                     tasksList.Add($"{Helper.AddSpacesToString((task.Completed ? yes : no), 15)}{Helper.AddSpacesToString(task.TeamMemberName, 18)}{Helper.AddSpacesToString(task.DueDate.ToString("MM/dd/yyyy"), 15)}{Helper.AddSpacesToString(task.Description, 35)}");

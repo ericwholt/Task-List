@@ -4,9 +4,24 @@ namespace Task_List
 {
     class Helper
     {
+
+        private static double _uniqueId = -1; 
+
+        public static double GetUniqueId()
+        {
+            SetUniqueId(_uniqueId + 1);
+            
+            return _uniqueId;
+        }
+
+        private static void SetUniqueId(double value)
+        {
+            _uniqueId = value;
+        }
+
         public static int GetIntFromUser(string message)
         {
-            Console.WriteLine(message);
+            Console.Write(message);
             try
             {
                 return int.Parse(Console.ReadLine());
@@ -22,22 +37,6 @@ namespace Task_List
 
         public static DateTime GetDateTimeFromUser(string message)
         {
-            Console.WriteLine(message);
-            try
-            {
-                return DateTime.Parse(Console.ReadLine());
-
-            }
-            catch (Exception e)
-            {
-
-                Console.WriteLine("Invalid Input! " + message);
-                return GetDateTimeFromUser(message);
-            }
-        }
-
-        public static DateTime GetDateTimeFromUser(string message, bool sameLine)
-        {
             Console.Write(message);
             try
             {
@@ -48,7 +47,7 @@ namespace Task_List
             {
 
                 Console.WriteLine("Invalid Input! ");
-                return GetDateTimeFromUser(message, true);
+                return GetDateTimeFromUser(message);
             }
         }
 
@@ -89,18 +88,6 @@ namespace Task_List
         }
 
         public static string GetStringFromUser(string message)
-        {
-            Console.WriteLine(message);
-            string answer = Console.ReadLine().Trim();
-            if (String.IsNullOrWhiteSpace(answer))
-            {
-                Console.WriteLine("You must enter something!");
-                return GetStringFromUser(message);
-            }
-            return answer;
-        }
-
-        public static string GetStringFromUser(string message, bool sameLine)
         {
             Console.Write(message);
             string answer = Console.ReadLine().Trim();

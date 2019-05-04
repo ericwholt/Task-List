@@ -93,13 +93,6 @@ namespace Task_List
 
         public void DeleteTask(DateTime beforeDate)
         {
-            //if (teamMemberNameIndex == -1)
-            //{
-            //    DeleteTask();
-            //}
-            //else
-            //{
-
             List<Task> filteredList = _tasks.Where(x => x.DueDate < beforeDate).ToList();
 
             Console.WriteLine("DELETE TASK");
@@ -130,7 +123,6 @@ namespace Task_List
                     Console.WriteLine("No tasks to delete");
                     return;
                 }
-            //}
         }
 
         public void DeleteTask(int teamMemberNameIndex, DateTime beforeDate)
@@ -177,12 +169,12 @@ namespace Task_List
 
         public void MarkTaskComplete()
         {
-            Console.WriteLine("MARK TASK COMPLETE");
+            Console.WriteLine("TOGGLE TASK COMPLETE");
             ListTasks();
             if (_tasks.Count > 0)
             {
-                int task = Helper.GetIntFromUser("What task is completed?");
-                _tasks[task].Completed = !_tasks[task].Completed;
+                int task = Helper.GetIntFromUser("Choose task to toggle complete: ");
+                _tasks[task].ToggleComplete();
             }
             else
             {
@@ -193,13 +185,12 @@ namespace Task_List
 
         public void MarkTaskComplete(DateTime beforeDate)
         {
-            Console.WriteLine("MARK TASK COMPLETE");
+            Console.WriteLine("TOGGLE TASK COMPLETE");
             ListTasks(beforeDate);
             List<Task> filteredList = _tasks.Where(x => x.DueDate < beforeDate).ToList();
             if (_tasks.Count > 0)
             {
-                int task = Helper.GetIntFromUser("What task is completed?");
-                //_tasks[task].Completed = !_tasks[task].Completed;
+                int task = Helper.GetIntFromUser("Choose task to toggle complete: ");
 
                 try
                 {
@@ -208,7 +199,7 @@ namespace Task_List
 
                         if (item == filteredList[task - 1])
                         {
-                            item.Completed = !item.Completed;
+                            item.ToggleComplete();
                         }
                     }
                 }
@@ -234,12 +225,12 @@ namespace Task_List
             else
             {
                 List<Task> filteredList = _tasks.Where(x => x.TeamMemberName == _teamMemberNames[teamMemberNameIndex - 1]).ToList();
-                Console.WriteLine("MARK TASK COMPLETE");
+                Console.WriteLine("TOGGLE TASK COMPLETE");
                 ListTasks(teamMemberNameIndex);//Don't subtract 1 because the ListTasks does it for you.
                 if (filteredList.Count > 0)
                 {
 
-                    int task = Helper.GetIntFromUser("What task is completed?");
+                    int task = Helper.GetIntFromUser("Choose task to toggle complete: ");
 
                     try
                     {
@@ -248,14 +239,14 @@ namespace Task_List
 
                             if (item == filteredList[task - 1])
                             {
-                                item.Completed = !item.Completed;
+                                item.ToggleComplete();
                             }
                         }
                     }
                     catch (Exception)
                     {
 
-                        Console.WriteLine("Unable to mark complete");
+                        Console.WriteLine("Unable to toggle complete");
                     }
 
                 }
@@ -281,12 +272,12 @@ namespace Task_List
             {
                 List<Task> filteredList1 = _tasks.Where(x => x.TeamMemberName == _teamMemberNames[teamMemberNameIndex - 1]).ToList();
                 List<Task> filteredList = filteredList1.Where(x => x.DueDate < beforeDate).ToList();
-                Console.WriteLine("MARK TASK COMPLETE");
+                Console.WriteLine("TOGGLE TASK COMPLETE");
                 ListTasks(teamMemberNameIndex);//Don't subtract 1 because the ListTasks does it for you.
                 if (filteredList.Count > 0)
                 {
 
-                    int task = Helper.GetIntFromUser("What task is completed?");
+                    int task = Helper.GetIntFromUser("Choose task to toggle complete: ");
 
                     // confirm that the user wants to actually delete
                     bool confirmed = Helper.GetYesOrNoFromUser("Are you sure?");
@@ -299,7 +290,7 @@ namespace Task_List
 
                                 if (item == filteredList[task - 1])
                                 {
-                                    item.Completed = !item.Completed;
+                                    item.ToggleComplete();
                                 }
                             }
                         }
@@ -323,13 +314,31 @@ namespace Task_List
             Console.WriteLine("EDIT TASK");
             ListTasks();
             int task = Helper.GetIntFromUser("What task would you like to edit?  ");
-            string teamMemberName = Helper.GetStringFromUser("Enter team member name: ");
-            string description = Helper.GetStringFromUser("Enter task description: ");
-            DateTime dueDate = Helper.GetDateTimeFromUser("Enter due date: ");
+
+
             bool status = Helper.GetYesOrNoFromUser($"Mark task as {(_tasks[task - 1].Completed ? "not completed?" : "completed?")} ");
             try
             {
-                _tasks[task - 1].UpdateTask(teamMemberName, description, dueDate, status);
+                if (Helper.GetYesOrNoFromUser("Edit team member name?"))
+                {
+                    string teamMemberName = Helper.GetStringFromUser("Enter team member name: ");
+                    _tasks[task - 1].UpdateTaskTeamMember(teamMemberName);
+                }
+                if (Helper.GetYesOrNoFromUser("Edit task description?"))
+                {
+                    string description = Helper.GetStringFromUser("Enter task description: ");
+                    _tasks[task - 1].UpdateTaskDescription(description);
+                }
+                if (Helper.GetYesOrNoFromUser("Edit due date?"))
+                {
+                    DateTime dueDate = Helper.GetDateTimeFromUser("Enter due date: ");
+                    _tasks[task - 1].UpdateTaskDueDate(dueDate);
+                }
+                if (Helper.GetYesOrNoFromUser("Toggle complete?"))
+                {
+                    _tasks[task - 1].ToggleComplete();
+                }
+                
             }
             catch (Exception)
             {
@@ -353,16 +362,31 @@ namespace Task_List
                 {
 
                     int task = Helper.GetIntFromUser("What task would you like to edit?  ");
-                    string teamMemberName = Helper.GetStringFromUser("Enter team member name: ");
-                    string description = Helper.GetStringFromUser("Enter task description: ");
-                    DateTime dueDate = Helper.GetDateTimeFromUser("Enter due date: ");
-                    bool status = Helper.GetYesOrNoFromUser($"Mark task as {(_tasks[task - 1].Completed ? "not completed?" : "completed?")} ");
 
                     foreach (Task item in _tasks)
                     {
                         if (item == filteredList[task - 1])
                         {
-                            item.UpdateTask(teamMemberName, description, dueDate, status);
+                            if (Helper.GetYesOrNoFromUser("Edit team member name?"))
+                            {
+                                string teamMemberName = Helper.GetStringFromUser("Enter team member name: ");
+                                item.UpdateTaskTeamMember(teamMemberName);
+                            }
+                            if (Helper.GetYesOrNoFromUser("Edit task description?"))
+                            {
+                                string description = Helper.GetStringFromUser("Enter task description: ");
+                                item.UpdateTaskDescription(description);
+                            }
+                            if (Helper.GetYesOrNoFromUser("Edit due date?"))
+                            {
+                                DateTime dueDate = Helper.GetDateTimeFromUser("Enter due date: ");
+                                item.UpdateTaskDueDate(dueDate);
+                            }
+                            if (Helper.GetYesOrNoFromUser("Toggle complete?"))
+                            {
+                                item.ToggleComplete();
+                            }
+                            //item.UpdateTask(teamMemberName, description, dueDate, status);
                         }
                     }
                 }
@@ -397,16 +421,34 @@ namespace Task_List
                     {
 
                         int task = Helper.GetIntFromUser("What task would you like to edit?  ");
-                        string teamMemberName = Helper.GetStringFromUser("Enter team member name: ");
-                        string description = Helper.GetStringFromUser("Enter task description: ");
-                        DateTime dueDate = Helper.GetDateTimeFromUser("Enter due date: ");
-                        bool status = Helper.GetYesOrNoFromUser($"Mark task as {(_tasks[task - 1].Completed ? "not completed?" : "completed?")} ");
+                        //string teamMemberName = Helper.GetStringFromUser("Enter team member name: ");
+                        //string description = Helper.GetStringFromUser("Enter task description: ");
+                        //DateTime dueDate = Helper.GetDateTimeFromUser("Enter due date: ");
+                        //bool status = Helper.GetYesOrNoFromUser($"Mark task as {(_tasks[task - 1].Completed ? "not completed?" : "completed?")} ");
 
                         foreach (Task item in _tasks)
                         {
                             if (item == filteredList[task - 1])
                             {
-                                item.UpdateTask(teamMemberName, description, dueDate, status);
+                                if (Helper.GetYesOrNoFromUser("Edit team member name?"))
+                                {
+                                    string teamMemberName = Helper.GetStringFromUser("Enter team member name: ");
+                                    item.UpdateTaskTeamMember(teamMemberName);
+                                }
+                                if (Helper.GetYesOrNoFromUser("Edit task description?"))
+                                {
+                                    string description = Helper.GetStringFromUser("Enter task description: ");
+                                    item.UpdateTaskDescription(description);
+                                }
+                                if (Helper.GetYesOrNoFromUser("Edit due date?"))
+                                {
+                                    DateTime dueDate = Helper.GetDateTimeFromUser("Enter due date: ");
+                                    item.UpdateTaskDueDate(dueDate);
+                                }
+                                if (Helper.GetYesOrNoFromUser("Toggle complete?"))
+                                {
+                                    item.ToggleComplete();
+                                }
                             }
                         }
                     }
@@ -540,7 +582,5 @@ namespace Task_List
             Console.WriteLine();
             menu.PrintMenu();
         }
-
-
     }
 }

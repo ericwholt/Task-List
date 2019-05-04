@@ -10,10 +10,10 @@ namespace Task_List
     class Task
     {
         // declare global vars and Properties
-        public string TeamMemberName { get; set; }
-        public string Description { get; set; }
-        public DateTime DueDate { get; set; }
-        public bool Completed { get; set; }
+        public string TeamMemberName { get; private set; }
+        public string Description { get; private set; }
+        public DateTime DueDate { get; private set; }
+        public bool Completed { get; private set; }
         public double UniqueId { get; }
         
 
@@ -42,6 +42,26 @@ namespace Task_List
             this.Description = Description;
             this.DueDate = DueDate;
             this.Completed = Completed;
+        }
+
+        public void UpdateTaskTeamMember(string TeamMemberName)
+        {
+            this.TeamMemberName = TeamMemberName;
+        }
+
+        public void UpdateTaskDescription(string Description)
+        {
+            this.Description = Description;
+        }
+
+        public void UpdateTaskDueDate(DateTime dueDate)
+        {
+            this.DueDate = dueDate;
+        }
+
+        public void ToggleComplete()
+        {
+            this.Completed = !this.Completed;
         }
     }
 }

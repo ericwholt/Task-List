@@ -11,7 +11,7 @@ namespace Task_List
         static void Main(string[] args)
         {
 
-            List<string> menuItems = new List<string> { "List tasks", "List tasks by team member", "List tasks before date", "Add task", "Edit task", "Delete task", "Mark task complete", "Quit" };
+            List<string> menuItems = new List<string> { "List tasks", "List tasks by team member", "List tasks before date", "Add task", "Edit task", "Delete task", "Toggle task complete", "Quit" };
             Menu menu = new Menu(menuItems);
 
             //menu.PrintMenu("Task Actions");

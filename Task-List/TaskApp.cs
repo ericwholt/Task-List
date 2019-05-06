@@ -8,6 +8,14 @@ namespace Task_List
     {
         private List<Task> _tasks = new List<Task>();
         private List<string> _teamMemberNames = new List<string>();
+        private string ConsoleHeader = $"   {Helper.AddSpacesToString("Completed", 15)}{Helper.AddSpacesToString("Team Member", 18)}{Helper.AddSpacesToString("Due Date", 15)}{Helper.AddSpacesToString("Description", 35)}";
+
+        /// <summary>
+        /// Add Task
+        /// </summary>
+        /// <param name="teamMemberName">string</param>
+        /// <param name="description">string</param>
+        /// <param name="dueDate">DateTime</param>
         public void AddTask(string teamMemberName, string description, DateTime dueDate)
         {
             try
@@ -27,6 +35,9 @@ namespace Task_List
             }
         }
 
+        /// <summary>
+        /// Delete task
+        /// </summary>
         public void DeleteTask()
         {
             Console.WriteLine("DELETE TASK");
@@ -49,6 +60,10 @@ namespace Task_List
             }
         }
 
+        /// <summary>
+        /// Delete task filtered by team member name.
+        /// </summary>
+        /// <param name="teamMemberNameIndex">int</param>
         public void DeleteTask(int teamMemberNameIndex)
         {
             if (teamMemberNameIndex == -1)
@@ -58,7 +73,7 @@ namespace Task_List
             else
             {
 
-                List<Task> filteredList = _tasks.Where(x => x.TeamMemberName == _teamMemberNames[teamMemberNameIndex - 1]).ToList();
+                List<Task> filteredList = FilterTasksTeamMemberIndex(_tasks, teamMemberNameIndex);
 
                 Console.WriteLine("DELETE TASK");
                 ListTasks(teamMemberNameIndex);//Don't subtract 1 because the ListTaskFilteredBy does it for you.
@@ -91,9 +106,13 @@ namespace Task_List
             }
         }
 
+        /// <summary>
+        /// Delete task filtered before date
+        /// </summary>
+        /// <param name="beforeDate">DateTime</param>
         public void DeleteTask(DateTime beforeDate)
         {
-            List<Task> filteredList = _tasks.Where(x => x.DueDate < beforeDate).ToList();
+            List<Task> filteredList = FilterTasksBeforeDate(_tasks, beforeDate);
 
             Console.WriteLine("DELETE TASK");
                 ListTasks(beforeDate);//Don't subtract 1 because the ListTaskFilteredBy does it for you.
@@ -125,6 +144,12 @@ namespace Task_List
                 }
         }
 
+
+        /// <summary>
+        /// Delete task filtered by team member name and before date
+        /// </summary>
+        /// <param name="teamMemberNameIndex">int</param>
+        /// <param name="beforeDate">DateTime</param>
         public void DeleteTask(int teamMemberNameIndex, DateTime beforeDate)
         {
             if (teamMemberNameIndex == -1)
@@ -133,11 +158,10 @@ namespace Task_List
             }
             else
             {
-                List<Task> filteredList1 = _tasks.Where(x => x.TeamMemberName == _teamMemberNames[teamMemberNameIndex - 1]).ToList();
-                List<Task> filteredList = filteredList1.Where(x => x.DueDate < beforeDate).ToList();
+                List<Task> filteredList = FilterTasksBeforeDate(FilterTasksTeamMemberIndex(_tasks, teamMemberNameIndex), beforeDate);
 
                 Console.WriteLine("DELETE TASK");
-                ListTasks(teamMemberNameIndex);//Don't subtract 1 because the ListTaskFilteredBy does it for you.
+                ListTasks(teamMemberNameIndex, beforeDate);//Don't subtract 1 because the ListTaskFilteredBy does it for you.
                 if (filteredList.Count > 0)
                 {
 
@@ -167,7 +191,10 @@ namespace Task_List
             }
         }
 
-        public void MarkTaskComplete()
+        /// <summary>
+        /// Toggle task complete.
+        /// </summary>
+        public void ToggleTaskComplete()
         {
             Console.WriteLine("TOGGLE TASK COMPLETE");
             ListTasks();
@@ -183,11 +210,15 @@ namespace Task_List
             }
         }
 
-        public void MarkTaskComplete(DateTime beforeDate)
+        /// <summary>
+        /// Toggle task complete.
+        /// </summary>
+        /// <param name="beforeDate">DateTime</param>
+        public void ToggleTaskComplete(DateTime beforeDate)
         {
             Console.WriteLine("TOGGLE TASK COMPLETE");
             ListTasks(beforeDate);
-            List<Task> filteredList = _tasks.Where(x => x.DueDate < beforeDate).ToList();
+            List<Task> filteredList = FilterTasksBeforeDate(_tasks, beforeDate);
             if (_tasks.Count > 0)
             {
                 int task = Helper.GetIntFromUser("Choose task to toggle complete: ");
@@ -216,15 +247,19 @@ namespace Task_List
             }
         }
 
-        public void MarkTaskComplete(int teamMemberNameIndex)
+        /// <summary>
+        /// Toggle task complete. Tasks filtered by team name member.
+        /// </summary>
+        /// <param name="teamMemberNameIndex"></param>
+        public void ToggleTaskComplete(int teamMemberNameIndex)
         {
             if (teamMemberNameIndex == -1)
             {
-                MarkTaskComplete();
+                ToggleTaskComplete();
             }
             else
             {
-                List<Task> filteredList = _tasks.Where(x => x.TeamMemberName == _teamMemberNames[teamMemberNameIndex - 1]).ToList();
+                List<Task> filteredList = FilterTasksTeamMemberIndex(_tasks, teamMemberNameIndex);
                 Console.WriteLine("TOGGLE TASK COMPLETE");
                 ListTasks(teamMemberNameIndex);//Don't subtract 1 because the ListTasks does it for you.
                 if (filteredList.Count > 0)
@@ -258,22 +293,27 @@ namespace Task_List
             }
         }
 
-        public void MarkTaskComplete(int teamMemberNameIndex, DateTime beforeDate)
+        /// <summary>
+        /// Toggle task complete. Tasks filtered by team name member and before date.
+        /// </summary>
+        /// <param name="teamMemberNameIndex">int</param>
+        /// <param name="beforeDate">DateTime</param>
+        public void ToggleTaskComplete(int teamMemberNameIndex, DateTime beforeDate)
         {
             if (teamMemberNameIndex == -1)
             {
-                MarkTaskComplete(beforeDate);
+                ToggleTaskComplete(beforeDate);
             }
             else if (beforeDate == DateTime.MaxValue)
             {
-                MarkTaskComplete(teamMemberNameIndex);
+                ToggleTaskComplete(teamMemberNameIndex);
             }
             else
             {
-                List<Task> filteredList1 = _tasks.Where(x => x.TeamMemberName == _teamMemberNames[teamMemberNameIndex - 1]).ToList();
-                List<Task> filteredList = filteredList1.Where(x => x.DueDate < beforeDate).ToList();
+                List<Task> filteredList = FilterTasksBeforeDate(FilterTasksTeamMemberIndex(_tasks, teamMemberNameIndex), beforeDate);
+
                 Console.WriteLine("TOGGLE TASK COMPLETE");
-                ListTasks(teamMemberNameIndex);//Don't subtract 1 because the ListTasks does it for you.
+                ListTasks(teamMemberNameIndex, beforeDate);//Don't subtract 1 because the ListTasks does it for you.
                 if (filteredList.Count > 0)
                 {
 
@@ -309,6 +349,9 @@ namespace Task_List
             }
         }
 
+        /// <summary>
+        /// Edit selected task. Will ask if you want to edit each column.
+        /// </summary>
         public void EditTask()
         {
             Console.WriteLine("EDIT TASK");
@@ -349,13 +392,15 @@ namespace Task_List
 
         }
 
+        /// <summary>
+        /// Edit selected task. Will ask if you want to edit each column. Tasks are filtered by before date then gets user selection.
+        /// </summary>
+        /// <param name="beforeDate">DateTime</param>
         public void EditTask(DateTime beforeDate)
         {
             try
             {
-
-                //List<Task> filteredList1 = _tasks.Where(x => x.TeamMemberName == _teamMemberNames[teamMemberNameIndex - 1]).ToList();
-                List<Task> filteredList = _tasks.Where(x => x.DueDate < beforeDate).ToList();
+                List<Task> filteredList = FilterTasksBeforeDate(_tasks, beforeDate);
                 Console.WriteLine("EDIT TASK");
                 ListTasks(beforeDate);
                 if (filteredList.Count > 0)
@@ -401,6 +446,11 @@ namespace Task_List
             }
         }
 
+        /// <summary>
+        /// Edit selected task. Will ask if you want to edit each column. Tasks are filtered by team member name and before date then gets user selection.
+        /// </summary>
+        /// <param name="teamMemberNameIndex">int</param>
+        /// <param name="beforeDate">DateTime</param>
         public void EditTask(int teamMemberNameIndex, DateTime beforeDate)
         {
             if (teamMemberNameIndex == -1)
@@ -413,18 +463,13 @@ namespace Task_List
                 try
                 {
 
-                    List<Task> filteredList1 = _tasks.Where(x => x.TeamMemberName == _teamMemberNames[teamMemberNameIndex - 1]).ToList();
-                    List<Task> filteredList = filteredList1.Where(x => x.DueDate < beforeDate).ToList();
+                    List<Task> filteredList = FilterTasksBeforeDate(FilterTasksTeamMemberIndex(_tasks, teamMemberNameIndex), beforeDate);
                     Console.WriteLine("EDIT TASK");
                     ListTasks(teamMemberNameIndex, beforeDate);
                     if (filteredList.Count > 0)
                     {
 
                         int task = Helper.GetIntFromUser("What task would you like to edit?  ");
-                        //string teamMemberName = Helper.GetStringFromUser("Enter team member name: ");
-                        //string description = Helper.GetStringFromUser("Enter task description: ");
-                        //DateTime dueDate = Helper.GetDateTimeFromUser("Enter due date: ");
-                        //bool status = Helper.GetYesOrNoFromUser($"Mark task as {(_tasks[task - 1].Completed ? "not completed?" : "completed?")} ");
 
                         foreach (Task item in _tasks)
                         {
@@ -464,47 +509,46 @@ namespace Task_List
             }
         }
 
+        /// <summary>
+        /// List all tasks
+        /// </summary>
         public void ListTasks()
         {
             List<string> tasksList = new List<string>();
-            string yes = "yes";
-            string no = "no";
-            string header = $"   {Helper.AddSpacesToString("Completed", 15)}{Helper.AddSpacesToString("Team Member", 18)}{Helper.AddSpacesToString("Due Date", 15)}{Helper.AddSpacesToString("Description", 35)}";
 
             Console.WriteLine();//Create seperator
             Console.WriteLine("LIST TASK");//Action description
-            Console.WriteLine(header);//Display header
+            Console.WriteLine(ConsoleHeader);//Display header
             foreach (Task task in _tasks)
             {
-                tasksList.Add($"{Helper.AddSpacesToString((task.Completed ? yes : no), 15)}{Helper.AddSpacesToString(task.TeamMemberName, 18)}{Helper.AddSpacesToString(task.DueDate.ToString("MM/dd/yyyy"), 15)}{Helper.AddSpacesToString(task.Description, 35)}");
+                tasksList.Add(task.GetConsoleText());
             }
             Menu menu = new Menu(tasksList);
-            Console.WriteLine();
             menu.PrintMenu();
 
         }
 
+        /// <summary>
+        /// List tasks matching team member name(index of task)
+        /// </summary>
+        /// <param name="teamMemberNameIndex">int</param>
         public void ListTasks(int teamMemberNameIndex)
         {
             try
             {
                 List<string> tasksList = new List<string>();
-                string yes = "yes";
-                string no = "no";
-                string header = $"   {Helper.AddSpacesToString("Completed", 15)}{Helper.AddSpacesToString("Team Member", 18)}{Helper.AddSpacesToString("Due Date", 15)}{Helper.AddSpacesToString("Description", 35)}";
 
                 Console.WriteLine();//Create seperator
                 Console.WriteLine("LIST TASK");//Action description
-                Console.WriteLine(header);//Display header
+                Console.WriteLine(ConsoleHeader);//Display header
                 foreach (Task task in _tasks)
                 {
                     if (task.TeamMemberName == _teamMemberNames[teamMemberNameIndex - 1])
                     {
-                        tasksList.Add($"{Helper.AddSpacesToString((task.Completed ? yes : no), 15)}{Helper.AddSpacesToString(task.TeamMemberName, 18)}{Helper.AddSpacesToString(task.DueDate.ToString("MM/dd/yyyy"), 15)}{Helper.AddSpacesToString(task.Description, 35)}");
+                        tasksList.Add(task.GetConsoleText());
                     }
                 }
                 Menu menu = new Menu(tasksList);
-                Console.WriteLine();
                 menu.PrintMenu();
             }
             catch (Exception)
@@ -515,56 +559,61 @@ namespace Task_List
             }
         }
 
-        public void ListTasks(DateTime date)
+        /// <summary>
+        /// List all tasks before date
+        /// </summary>
+        /// <param name="beforeDate"></param>
+        public void ListTasks(DateTime beforeDate)
         {
-            string header = $"   {Helper.AddSpacesToString("Completed", 15)}{Helper.AddSpacesToString("Team Member", 18)}{Helper.AddSpacesToString("Due Date", 15)}{Helper.AddSpacesToString("Description", 35)}";
+            //string header = $"   {Helper.AddSpacesToString("Completed", 15)}{Helper.AddSpacesToString("Team Member", 18)}{Helper.AddSpacesToString("Due Date", 15)}{Helper.AddSpacesToString("Description", 35)}";
             List<string> tasksList = new List<string>();
-            string yes = "yes";
-            string no = "no";
             Console.WriteLine();//Create seperator
             Console.WriteLine("LIST TASK");//Action description
-            Console.WriteLine(header);//Display header
+            Console.WriteLine(ConsoleHeader);//Display header
             foreach (Task task in _tasks)
             {
-                if (task.DueDate < date)
+                if (task.DueDate < beforeDate)
                 {
-                    tasksList.Add($"{Helper.AddSpacesToString((task.Completed ? yes : no), 15)}{Helper.AddSpacesToString(task.TeamMemberName, 18)}{Helper.AddSpacesToString(task.DueDate.ToString("MM/dd/yyyy"), 15)}{Helper.AddSpacesToString(task.Description, 35)}");
+                        tasksList.Add(task.GetConsoleText());
                 }
             }
             Menu menu = new Menu(tasksList);
-            Console.WriteLine();
             menu.PrintMenu();
         }
 
-        public void ListTasks(int teamMemberNameIndex, DateTime date)
+        /// <summary>
+        /// List tasks by team member and any task before date
+        /// </summary>
+        /// <param name="teamMemberNameIndex">int</param>
+        /// <param name="beforeDate">DateTime</param>
+        public void ListTasks(int teamMemberNameIndex, DateTime beforeDate)
         {
             if (teamMemberNameIndex == -1)
             {
-                ListTasks(date);
+                ListTasks(beforeDate);
             }
             else
             {
-
-                string header = $"   {Helper.AddSpacesToString("Completed", 15)}{Helper.AddSpacesToString("Team Member", 18)}{Helper.AddSpacesToString("Due Date", 15)}{Helper.AddSpacesToString("Description", 35)}";
                 List<string> tasksList = new List<string>();
-                string yes = "yes";
-                string no = "no";
+
                 Console.WriteLine();//Create seperator
                 Console.WriteLine("LIST TASK");//Action description
-                Console.WriteLine(header);//Display header
+                Console.WriteLine(ConsoleHeader);//Display header
                 foreach (Task task in _tasks)
                 {
-                    if (task.DueDate < date && task.TeamMemberName == _teamMemberNames[teamMemberNameIndex - 1])
+                    if (task.DueDate < beforeDate && task.TeamMemberName == _teamMemberNames[teamMemberNameIndex - 1])
                     {
-                        tasksList.Add($"{Helper.AddSpacesToString((task.Completed ? yes : no), 15)}{Helper.AddSpacesToString(task.TeamMemberName, 18)}{Helper.AddSpacesToString(task.DueDate.ToString("MM/dd/yyyy"), 15)}{Helper.AddSpacesToString(task.Description, 35)}");
+                        tasksList.Add(task.GetConsoleText());
                     }
                 }
                 Menu menu = new Menu(tasksList);
-                Console.WriteLine();
                 menu.PrintMenu();
             }
         }
 
+        /// <summary>
+        /// Prints menu of team members.
+        /// </summary>
         public void ListTaskTeamMembers()
         {
             List<string> nameList = new List<string>();
@@ -579,8 +628,32 @@ namespace Task_List
             }
 
             Menu menu = new Menu(nameList);
-            Console.WriteLine();
             menu.PrintMenu();
+        }
+
+
+        /// <summary>
+        /// Filter a list of tasks before date
+        /// </summary>
+        /// <param name="tasks">List<Task></param>
+        /// <param name="beforeDate">DateTime</param>
+        /// <returns>List<Task></returns>
+        private List<Task> FilterTasksBeforeDate(List<Task> tasks, DateTime beforeDate)
+        {
+            List<Task> filteredList = tasks.Where(x => x.DueDate < beforeDate).ToList();
+            return filteredList;
+        }
+
+        /// <summary>
+        /// Filter a list of tasks by team Member Name Index
+        /// </summary>
+        /// <param name="tasks">List<Task></param>
+        /// <param name="teamMemberNameIndex">Int</param>
+        /// <returns>List<Task></returns>
+        private List<Task> FilterTasksTeamMemberIndex(List<Task> tasks, int teamMemberNameIndex)
+        {
+            List<Task> filteredList = tasks.Where(x => x.TeamMemberName == _teamMemberNames[teamMemberNameIndex - 1]).ToList();
+            return filteredList;
         }
     }
 }

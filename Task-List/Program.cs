@@ -5,28 +5,34 @@ namespace Task_List
 {
     class Program
     {
-        // list of task objects
-        public static List<Task> tasks = new List<Task>();
-        enum MenuAction { list=1, listTeamMember, listBeforeDate, add, edit, delete, complete, quit };
+        enum MenuAction { list=1, clearFilters, filterByTeamMember, filterByBeforeDate, add, edit, delete, complete, quit };//Enum for switch statments
         static void Main(string[] args)
         {
-
-            List<string> menuItems = new List<string> { "List tasks", "List tasks by team member", "List tasks before date", "Add task", "Edit task", "Delete task", "Toggle task complete", "Quit" };
+            //Create menu strings
+            List<string> menuItems = new List<string> {
+                "List tasks",
+                "Clear Filters",
+                "Add Filter by team member",
+                "Add Filter before date",
+                "Add task",
+                "Edit task",
+                "Delete task",
+                "Toggle task complete",
+                "Quit"
+            };
             Menu menu = new Menu(menuItems);
 
-            //menu.PrintMenu("Task Actions");
-            TaskApp tasks = new TaskApp();
+            TaskApp tasks = new TaskApp();//create our task app and add some tasks 
             tasks.AddTask("Andre Otte", "make bed really well", DateTime.Parse("05/25/2019"));
             tasks.AddTask("Eric Holt", "write kick-ass code", DateTime.Today);
             tasks.AddTask("Eric Holt", "cook noodles", DateTime.Today);
 
-
-            int filterChoiceName = -1;
-            DateTime filterChoiceDate = DateTime.MaxValue;
+            int filterChoiceName = -1;//Non filter starting number
+            DateTime filterChoiceDate = DateTime.MaxValue;//Set to max date when not filtered
             bool run = true;
             while (run)
             {
-                Console.WriteLine();
+                Console.WriteLine("---------------------------------");
                 menu.PrintMenu("Task Actions");
                 int userInput = Helper.GetIntFromUser("Which Action: ");
 
@@ -34,19 +40,18 @@ namespace Task_List
                 {
                     case (int)MenuAction.list:
                         Console.Clear();
+                        tasks.ListTasks(filterChoiceName, filterChoiceDate);
+                        break;
+                    case (int)MenuAction.clearFilters:
                         filterChoiceName = -1;
                         filterChoiceDate = DateTime.MaxValue;
-                        //menu.PrintMenu("Task Actions");
-                        tasks.ListTasks();
                         break;
-                    case (int)MenuAction.listTeamMember:
+                    case (int)MenuAction.filterByTeamMember:
                         tasks.ListTaskTeamMembers();
                         filterChoiceName = Helper.GetIntFromUser("Enter number of team member: ");
-                        tasks.ListTasks(filterChoiceName, filterChoiceDate);
                         break;
-                    case (int)MenuAction.listBeforeDate:
+                    case (int)MenuAction.filterByBeforeDate:
                         filterChoiceDate = Helper.GetDateTimeFromUser("Enter date to filter tasks due before: ");
-                        tasks.ListTasks(filterChoiceName, filterChoiceDate);
                         break;
                     case (int)MenuAction.add:
                         Console.Clear();
@@ -65,7 +70,7 @@ namespace Task_List
                         Console.Clear();
                         break;
                     case (int)MenuAction.complete:
-                        tasks.MarkTaskComplete(filterChoiceName, filterChoiceDate);
+                        tasks.ToggleTaskComplete(filterChoiceName, filterChoiceDate);
                         Console.Clear();
                         break;
                     case (int)MenuAction.quit:

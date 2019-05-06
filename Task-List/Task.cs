@@ -20,11 +20,16 @@ namespace Task_List
         // Constructor
         public Task(string TeamMemberName, string Description, DateTime DueDate, bool Completed)
         {
-            this.UniqueId = Helper.GetUniqueId();
+            UniqueId = Helper.GetUniqueId();
             this.TeamMemberName = TeamMemberName;
             this.Description = Description;
             this.DueDate = DueDate;
             this.Completed = Completed;
+        }
+
+        public string GetConsoleText()
+        {
+            return $"{Helper.AddSpacesToString((this.Completed ? "yes" : "no"), 15)}{Helper.AddSpacesToString(this.TeamMemberName, 18)}{Helper.AddSpacesToString(this.DueDate.ToString("MM/dd/yyyy"), 15)}{Helper.AddSpacesToString(this.Description, 35)}";
         }
 
         public Task(string Name, string Description, DateTime DueDate)
